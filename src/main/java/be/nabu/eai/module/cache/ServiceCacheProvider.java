@@ -1,5 +1,6 @@
 package be.nabu.eai.module.cache;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,6 +14,8 @@ import be.nabu.eai.repository.EAIResourceRepository;
 import be.nabu.eai.repository.util.SystemPrincipal;
 import be.nabu.libs.cache.api.CacheProvider;
 import be.nabu.libs.cache.resources.ResourceCache;
+import be.nabu.libs.resources.ResourceUtils;
+import be.nabu.libs.resources.api.ManageableContainer;
 import be.nabu.libs.services.cache.ComplexContentSerializer;
 import be.nabu.libs.services.cache.ServiceRefresher;
 
@@ -36,14 +39,15 @@ public class ServiceCacheProvider implements CacheProvider, Iterable<String> {
 		for (CacheArtifact artifact : repository.getArtifacts(CacheArtifact.class)) {
 			logger.debug("Cache artifact: " + artifact.getId());
 			try {
-				if (artifact.getConfiguration().getCacheProvider() == null) {
-					logger.warn("Can not create cache for '" + artifact.getId() + "' because it has no provider");
-				}
-				else if (artifact.getConfiguration().getService() == null) {
+				if (artifact.getConfiguration().getService() == null) {
 					logger.warn("Can not create cache for '" + artifact.getId() + "' because it has no configured service");
 				}
 				else {
-					ResourceCache cache = new ResourceCache(artifact.getConfiguration().getCacheProvider().getCacheContainer(), 
+					ManageableContainer<?> cacheContainer = artifact.getConfiguration().getCacheProvider() != null 
+						? artifact.getConfiguration().getCacheProvider().getCacheContainer(artifact.getId())
+						: (ManageableContainer<?>) ResourceUtils.mkdir(new URI("memory:/cache/anonymous/" + artifact.getId()), SystemPrincipal.ROOT);
+						
+					ResourceCache cache = new ResourceCache(cacheContainer, 
 						// defaults to 10 mb
 						artifact.getConfiguration().getMaxEntrySize() == null ? 1024*1024*5 : artifact.getConfiguration().getMaxEntrySize(),
 						// defaults to 100 mb

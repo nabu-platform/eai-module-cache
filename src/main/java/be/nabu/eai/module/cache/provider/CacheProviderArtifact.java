@@ -12,7 +12,6 @@ import be.nabu.libs.resources.api.features.CacheableResource;
 
 public class CacheProviderArtifact extends JAXBArtifact<CacheProviderConfiguration> {
 
-	private ManageableContainer<?> cacheContainer;
 	private Repository repository;
 	
 	public CacheProviderArtifact(String id, ResourceContainer<?> directory, Repository repository) {
@@ -20,27 +19,21 @@ public class CacheProviderArtifact extends JAXBArtifact<CacheProviderConfigurati
 		this.repository = repository;
 	}
 
-	public ManageableContainer<?> getCacheContainer() {
-		if (cacheContainer == null) {
-			synchronized(this) {
-				if (cacheContainer == null) {
-					try {
-						URI uri = getConfiguration().getUri();
-						if (uri == null) {
-							uri = new URI("memory:/cache/services/" + getId());
-						}
-						cacheContainer = (ManageableContainer<?>) ResourceUtils.mkdir(uri, SystemPrincipal.ROOT);
-						if (cacheContainer instanceof CacheableResource) {
-							((CacheableResource) cacheContainer).setCaching(getConfiguration().getShared() == null || !getConfiguration().getShared());
-						}
-					}
-					catch (Exception e) {
-						throw new RuntimeException(e);
-					}
-				}
+	public ManageableContainer<?> getCacheContainer(String id) {
+		try {
+			URI uri = getConfiguration().getUri();
+			if (uri == null) {
+				uri = new URI("memory:/cache/" + getId() + "/" + id);
 			}
+			ManageableContainer<?> cacheContainer = (ManageableContainer<?>) ResourceUtils.mkdir(uri, SystemPrincipal.ROOT);
+			if (cacheContainer instanceof CacheableResource) {
+				((CacheableResource) cacheContainer).setCaching(getConfiguration().getShared() == null || !getConfiguration().getShared());
+			}
+			return cacheContainer;
 		}
-		return cacheContainer;
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public Repository getRepository() {
