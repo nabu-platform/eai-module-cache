@@ -4,17 +4,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import be.nabu.eai.module.cache.provider.CacheProviderArtifact;
+import be.nabu.eai.repository.api.CacheProviderArtifact;
 import be.nabu.eai.repository.jaxb.ArtifactXMLAdapter;
 import be.nabu.libs.services.api.DefinedService;
 
 @XmlRootElement(name = "cache")
-@XmlType(propOrder = { "cacheProvider", "service", "maxEntrySize", "maxTotalSize", "cacheTimeout", "refreshTimeout" })
+@XmlType(propOrder = { "cacheProvider", "service", "maxEntrySize", "maxTotalSize", "cacheTimeout", "refresh" })
 public class CacheConfiguration {
 	
 	private CacheProviderArtifact cacheProvider;
 	private DefinedService service;
-	private Long maxEntrySize, maxTotalSize, cacheTimeout, refreshTimeout;
+	private Long maxEntrySize, maxTotalSize, cacheTimeout;
+	private Boolean refresh;
 	
 	@XmlJavaTypeAdapter(value = ArtifactXMLAdapter.class)
 	public DefinedService getService() {
@@ -41,12 +42,6 @@ public class CacheConfiguration {
 	public void setCacheTimeout(Long accessTimeout) {
 		this.cacheTimeout = accessTimeout;
 	}
-	public Long getRefreshTimeout() {
-		return refreshTimeout;
-	}
-	public void setRefreshTimeout(Long refreshTimeout) {
-		this.refreshTimeout = refreshTimeout;
-	}
 	@XmlJavaTypeAdapter(value = ArtifactXMLAdapter.class)
 	public CacheProviderArtifact getCacheProvider() {
 		return cacheProvider;
@@ -54,5 +49,10 @@ public class CacheConfiguration {
 	public void setCacheProvider(CacheProviderArtifact cacheProvider) {
 		this.cacheProvider = cacheProvider;
 	}
-	
+	public Boolean getRefresh() {
+		return refresh;
+	}
+	public void setRefresh(Boolean refresh) {
+		this.refresh = refresh;
+	}
 }

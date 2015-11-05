@@ -9,10 +9,10 @@ import be.nabu.eai.repository.resources.RepositoryEntry;
 import be.nabu.libs.property.api.Property;
 import be.nabu.libs.property.api.Value;
 
-public class CacheProviderGUIManager extends BaseJAXBGUIManager<CacheProviderConfiguration, CacheProviderArtifact> {
+public class CacheProviderGUIManager extends BaseJAXBGUIManager<CacheProviderConfiguration, CacheProviderArtifactImpl> {
 
 	public CacheProviderGUIManager() {
-		super("Service Cache Provider", CacheProviderArtifact.class, new CacheProviderManager(), CacheProviderConfiguration.class);
+		super("Service Cache Provider", CacheProviderArtifactImpl.class, new CacheProviderManager(), CacheProviderConfiguration.class);
 	}
 
 	@Override
@@ -21,8 +21,8 @@ public class CacheProviderGUIManager extends BaseJAXBGUIManager<CacheProviderCon
 	}
 
 	@Override
-	protected CacheProviderArtifact newInstance(MainController controller, RepositoryEntry entry, Value<?>...values) throws IOException {
-		return new CacheProviderArtifact(entry.getId(), entry.getContainer(), entry.getRepository());
+	protected CacheProviderArtifactImpl newInstance(MainController controller, RepositoryEntry entry, Value<?>...values) throws IOException {
+		return new CacheProviderArtifactImpl(entry.getId(), entry.getContainer(), entry.getRepository());
 	}
 	
 }
