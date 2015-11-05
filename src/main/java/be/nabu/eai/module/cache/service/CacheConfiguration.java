@@ -9,12 +9,12 @@ import be.nabu.eai.repository.jaxb.ArtifactXMLAdapter;
 import be.nabu.libs.services.api.DefinedService;
 
 @XmlRootElement(name = "cache")
-@XmlType(propOrder = { "cacheProvider", "service", "maxEntrySize", "maxTotalSize", "accessTimeout", "refreshTimeout" })
+@XmlType(propOrder = { "cacheProvider", "service", "maxEntrySize", "maxTotalSize", "cacheTimeout", "refreshTimeout" })
 public class CacheConfiguration {
 	
 	private CacheProviderArtifact cacheProvider;
 	private DefinedService service;
-	private Long maxEntrySize, maxTotalSize, accessTimeout, refreshTimeout;
+	private Long maxEntrySize, maxTotalSize, cacheTimeout, refreshTimeout;
 	
 	@XmlJavaTypeAdapter(value = ArtifactXMLAdapter.class)
 	public DefinedService getService() {
@@ -35,11 +35,11 @@ public class CacheConfiguration {
 	public void setMaxTotalSize(Long maxTotalSize) {
 		this.maxTotalSize = maxTotalSize;
 	}
-	public Long getAccessTimeout() {
-		return accessTimeout;
+	public Long getCacheTimeout() {
+		return cacheTimeout;
 	}
-	public void setAccessTimeout(Long accessTimeout) {
-		this.accessTimeout = accessTimeout;
+	public void setCacheTimeout(Long accessTimeout) {
+		this.cacheTimeout = accessTimeout;
 	}
 	public Long getRefreshTimeout() {
 		return refreshTimeout;

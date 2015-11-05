@@ -8,6 +8,7 @@ import be.nabu.eai.repository.util.SystemPrincipal;
 import be.nabu.libs.resources.ResourceUtils;
 import be.nabu.libs.resources.api.ManageableContainer;
 import be.nabu.libs.resources.api.ResourceContainer;
+import be.nabu.libs.resources.api.features.CacheableResource;
 
 public class CacheProviderArtifact extends JAXBArtifact<CacheProviderConfiguration> {
 
@@ -29,6 +30,9 @@ public class CacheProviderArtifact extends JAXBArtifact<CacheProviderConfigurati
 							uri = new URI("memory:/cache/services/" + getId());
 						}
 						cacheContainer = (ManageableContainer<?>) ResourceUtils.mkdir(uri, SystemPrincipal.ROOT);
+						if (cacheContainer instanceof CacheableResource) {
+							((CacheableResource) cacheContainer).setCaching(getConfiguration().getShared() == null || !getConfiguration().getShared());
+						}
 					}
 					catch (Exception e) {
 						throw new RuntimeException(e);

@@ -1,9 +1,14 @@
 package be.nabu.eai.module.cache;
 
-public class CacheEntry {
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "cache")
+public class CacheOverview {
 	private String serviceId;
 	private long currentCacheSize, maxCacheSize, maxEntrySize;
-	private int amountOfEntries;
+	private List<CacheEntryOverview> entries;
 	
 	public String getServiceId() {
 		return serviceId;
@@ -29,10 +34,10 @@ public class CacheEntry {
 	public void setMaxEntrySize(long maxEntrySize) {
 		this.maxEntrySize = maxEntrySize;
 	}
-	public int getAmountOfEntries() {
-		return amountOfEntries;
+	public List<CacheEntryOverview> getEntries() {
+		return entries;
 	}
-	public void setAmountOfEntries(int amountOfEntries) {
-		this.amountOfEntries = amountOfEntries;
+	public void setEntries(List<CacheEntryOverview> entries) {
+		this.entries = entries;
 	}
 }
