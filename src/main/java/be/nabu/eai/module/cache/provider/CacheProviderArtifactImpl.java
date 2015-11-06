@@ -12,6 +12,7 @@ import be.nabu.eai.repository.artifacts.jaxb.JAXBArtifact;
 import be.nabu.eai.repository.util.SystemPrincipal;
 import be.nabu.libs.cache.api.Cache;
 import be.nabu.libs.cache.api.CacheRefresher;
+import be.nabu.libs.cache.api.CacheTimeoutManager;
 import be.nabu.libs.cache.api.DataSerializer;
 import be.nabu.libs.cache.resources.ResourceCache;
 import be.nabu.libs.resources.ResourceUtils;
@@ -51,8 +52,8 @@ public class CacheProviderArtifactImpl extends JAXBArtifact<CacheProviderConfigu
 	}
 
 	@Override
-	public synchronized Cache create(String artifactId, long maxTotalSize, long maxEntrySize, long cacheTimeout, DataSerializer<?> keySerializer, DataSerializer<?> valueSerializer, CacheRefresher refresher) {
-		ResourceCache resourceCache = new ResourceCache(getCacheContainer(artifactId), maxEntrySize, maxTotalSize, cacheTimeout, refresher, refresher == null ? -1 : cacheTimeout);
+	public synchronized Cache create(String artifactId, long maxTotalSize, long maxEntrySize, DataSerializer<?> keySerializer, DataSerializer<?> valueSerializer, CacheRefresher refresher, CacheTimeoutManager timeoutManager) {
+		ResourceCache resourceCache = new ResourceCache(getCacheContainer(artifactId), maxEntrySize, maxTotalSize, refresher, timeoutManager);
 		resourceCache.setKeySerializer(keySerializer);
 		resourceCache.setValueSerializer(valueSerializer);
 		caches.put(artifactId, resourceCache);
