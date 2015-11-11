@@ -25,4 +25,8 @@ public class CacheGUIManager extends BaseJAXBGUIManager<CacheConfiguration, Cach
 		return new CacheArtifact(entry.getId(), entry.getContainer());
 	}
 
+	@Override
+	public String getCategory() {
+		return "Caching";
+	}
 }

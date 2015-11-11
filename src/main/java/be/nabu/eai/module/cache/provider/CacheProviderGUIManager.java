@@ -24,5 +24,10 @@ public class CacheProviderGUIManager extends BaseJAXBGUIManager<CacheProviderCon
 	protected CacheProviderArtifactImpl newInstance(MainController controller, RepositoryEntry entry, Value<?>...values) throws IOException {
 		return new CacheProviderArtifactImpl(entry.getId(), entry.getContainer(), entry.getRepository());
 	}
+
+	@Override
+	public String getCategory() {
+		return "Caching";
+	}
 	
 }
