@@ -1,5 +1,7 @@
 package be.nabu.eai.module.cache.service;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -13,16 +15,16 @@ import be.nabu.libs.services.api.DefinedService;
 public class CacheConfiguration {
 	
 	private CacheProviderArtifact cacheProvider;
-	private DefinedService service;
+	private List<DefinedService> services;
 	private Long maxEntrySize, maxTotalSize, cacheTimeout;
 	private Boolean refresh;
 	
 	@XmlJavaTypeAdapter(value = ArtifactXMLAdapter.class)
-	public DefinedService getService() {
-		return service;
+	public List<DefinedService> getService() {
+		return services;
 	}
-	public void setService(DefinedService service) {
-		this.service = service;
+	public void setService(List<DefinedService> services) {
+		this.services = services;
 	}
 	public Long getMaxEntrySize() {
 		return maxEntrySize;

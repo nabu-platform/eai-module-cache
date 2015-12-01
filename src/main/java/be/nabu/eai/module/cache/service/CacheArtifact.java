@@ -12,6 +12,7 @@ import be.nabu.libs.artifacts.api.StartableArtifact;
 import be.nabu.libs.artifacts.api.StoppableArtifact;
 import be.nabu.libs.cache.impl.LastModifiedTimeoutManager;
 import be.nabu.libs.resources.api.ResourceContainer;
+import be.nabu.libs.services.api.DefinedService;
 import be.nabu.libs.services.cache.ComplexContentSerializer;
 import be.nabu.libs.services.cache.ServiceRefresher;
 
@@ -26,9 +27,12 @@ public class CacheArtifact extends JAXBArtifact<CacheConfiguration> implements S
 
 	@Override
 	public void stop() throws IOException {
-		if (started && getConfiguration().getCacheProvider() != null) {
-			getConfiguration().getCacheProvider().remove(getConfiguration().getService().getId());
+		if (started && getConfiguration().getCacheProvider() != null && getConfiguration().getService() != null) {
+			for (DefinedService service : getConfiguration().getService()) {
+				getConfiguration().getCacheProvider().remove(service.getId());
+			}
 		}
+		started = false;
 	}
 
 	@Override
@@ -42,20 +46,22 @@ public class CacheArtifact extends JAXBArtifact<CacheConfiguration> implements S
 			else if (getConfiguration().getCacheProvider() == null) {
 				logger.warn("Can not create cache for '" + getId() + "', no cache provider found");
 			}
-			else {
-				getConfiguration().getCacheProvider().create(
-					getConfiguration().getService().getId(), 
-					// defaults to 100 mb
-					getConfiguration().getMaxTotalSize() == null ? 1024*1024*100 : getConfiguration().getMaxTotalSize(),
-					// defaults to 10 mb
-					getConfiguration().getMaxEntrySize() == null ? 1024*1024*5 : getConfiguration().getMaxEntrySize(),
-					new ComplexContentSerializer(getConfiguration().getService().getServiceInterface().getInputDefinition()),
-					new ComplexContentSerializer(getConfiguration().getService().getServiceInterface().getOutputDefinition()),
-					// only set a refresher if we have a refresh timeout set
-					getConfiguration().getRefresh() == null || !getConfiguration().getRefresh() ? null : new ServiceRefresher(repository, SystemPrincipal.ROOT, getConfiguration().getService()),
-					// defaults to an hour
-					new LastModifiedTimeoutManager(getConfiguration().getCacheTimeout() == null ? 1000*60*60 : getConfiguration().getCacheTimeout())
-				);
+			else if (getConfiguration().getService() != null && !getConfiguration().getService().isEmpty()) {
+				for (DefinedService service : getConfiguration().getService()) {
+					getConfiguration().getCacheProvider().create(
+							service.getId(), 
+						// defaults to 100 mb
+						getConfiguration().getMaxTotalSize() == null ? 1024*1024*100 : getConfiguration().getMaxTotalSize(),
+						// defaults to 10 mb
+						getConfiguration().getMaxEntrySize() == null ? 1024*1024*5 : getConfiguration().getMaxEntrySize(),
+						new ComplexContentSerializer(service.getServiceInterface().getInputDefinition()),
+						new ComplexContentSerializer(service.getServiceInterface().getOutputDefinition()),
+						// only set a refresher if we have a refresh timeout set
+						getConfiguration().getRefresh() == null || !getConfiguration().getRefresh() ? null : new ServiceRefresher(repository, SystemPrincipal.ROOT, service),
+						// defaults to an hour
+						new LastModifiedTimeoutManager(getConfiguration().getCacheTimeout() == null ? 1000*60*60 : getConfiguration().getCacheTimeout())
+					);
+				}
 				started = true;
 			}
 		}
