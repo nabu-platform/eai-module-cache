@@ -16,6 +16,7 @@ import be.nabu.libs.cache.api.CacheTimeoutManager;
 import be.nabu.libs.cache.api.DataSerializer;
 import be.nabu.libs.cache.resources.ResourceCache;
 import be.nabu.libs.resources.ResourceUtils;
+import be.nabu.libs.resources.URIUtils;
 import be.nabu.libs.resources.api.ManageableContainer;
 import be.nabu.libs.resources.api.ResourceContainer;
 import be.nabu.libs.resources.api.features.CacheableResource;
@@ -35,6 +36,9 @@ public class CacheProviderArtifactImpl extends JAXBArtifact<CacheProviderConfigu
 			URI uri = getConfiguration().getUri();
 			if (uri == null) {
 				uri = new URI("memory:/cache/" + getId() + "/" + id);
+			}
+			else {
+				uri = URIUtils.getChild(uri, id);
 			}
 			ManageableContainer<?> cacheContainer = (ManageableContainer<?>) ResourceUtils.mkdir(uri, SystemPrincipal.ROOT);
 			if (cacheContainer instanceof CacheableResource) {
