@@ -22,7 +22,7 @@ public class CacheGUIManager extends BaseJAXBGUIManager<CacheConfiguration, Cach
 
 	@Override
 	protected CacheArtifact newInstance(MainController controller, RepositoryEntry entry, Value<?>... values) throws IOException {
-		return new CacheArtifact(entry.getId(), entry.getContainer());
+		return new CacheArtifact(entry.getId(), entry.getContainer(), entry.getRepository());
 	}
 
 	@Override

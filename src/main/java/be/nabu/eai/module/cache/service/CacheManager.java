@@ -12,7 +12,7 @@ public class CacheManager extends JAXBArtifactManager<CacheConfiguration, CacheA
 
 	@Override
 	protected CacheArtifact newInstance(String id, ResourceContainer<?> container, Repository repository) {
-		return new CacheArtifact(id, container);
+		return new CacheArtifact(id, container, repository);
 	}
 
 }

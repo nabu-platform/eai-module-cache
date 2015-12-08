@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import be.nabu.eai.repository.EAIResourceRepository;
+import be.nabu.eai.repository.api.Repository;
 import be.nabu.eai.repository.artifacts.jaxb.JAXBArtifact;
 import be.nabu.eai.repository.util.SystemPrincipal;
 import be.nabu.libs.artifacts.api.StartableArtifact;
@@ -20,9 +20,11 @@ public class CacheArtifact extends JAXBArtifact<CacheConfiguration> implements S
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private boolean started;
+	private Repository repository;
 	
-	public CacheArtifact(String id, ResourceContainer<?> directory) {
+	public CacheArtifact(String id, ResourceContainer<?> directory, Repository repository) {
 		super(id, directory, "cache.xml", CacheConfiguration.class);
+		this.repository = repository;
 	}
 
 	@Override
@@ -38,7 +40,6 @@ public class CacheArtifact extends JAXBArtifact<CacheConfiguration> implements S
 	@Override
 	public void start() throws IOException {
 		logger.debug("Creating service cache for: " + getId());
-		EAIResourceRepository repository = EAIResourceRepository.getInstance();
 		try {
 			if (getConfiguration().getService() == null) {
 				logger.warn("Can not create cache for '" + getId() + "' because it has no configured service");
