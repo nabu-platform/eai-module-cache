@@ -23,12 +23,10 @@ import be.nabu.libs.resources.api.features.CacheableResource;
 
 public class CacheProviderArtifactImpl extends JAXBArtifact<CacheProviderConfiguration> implements CacheProviderArtifact {
 
-	private Repository repository;
 	private Map<String, Cache> caches = new HashMap<String, Cache>();
 	
 	public CacheProviderArtifactImpl(String id, ResourceContainer<?> directory, Repository repository) {
-		super(id, directory, "cache-provider.xml", CacheProviderConfiguration.class);
-		this.repository = repository;
+		super(id, directory, repository, "cache-provider.xml", CacheProviderConfiguration.class);
 	}
 
 	public ManageableContainer<?> getCacheContainer(String id) {
@@ -49,10 +47,6 @@ public class CacheProviderArtifactImpl extends JAXBArtifact<CacheProviderConfigu
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public Repository getRepository() {
-		return repository;
 	}
 
 	@Override

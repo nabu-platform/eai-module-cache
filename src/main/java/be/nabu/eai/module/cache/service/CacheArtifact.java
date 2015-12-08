@@ -20,11 +20,9 @@ public class CacheArtifact extends JAXBArtifact<CacheConfiguration> implements S
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private boolean started;
-	private Repository repository;
 	
 	public CacheArtifact(String id, ResourceContainer<?> directory, Repository repository) {
-		super(id, directory, "cache.xml", CacheConfiguration.class);
-		this.repository = repository;
+		super(id, directory, repository, "cache.xml", CacheConfiguration.class);
 	}
 
 	@Override
@@ -58,7 +56,7 @@ public class CacheArtifact extends JAXBArtifact<CacheConfiguration> implements S
 						new ComplexContentSerializer(service.getServiceInterface().getInputDefinition()),
 						new ComplexContentSerializer(service.getServiceInterface().getOutputDefinition()),
 						// only set a refresher if we have a refresh timeout set
-						getConfiguration().getRefresh() == null || !getConfiguration().getRefresh() ? null : new ServiceRefresher(repository, SystemPrincipal.ROOT, service),
+						getConfiguration().getRefresh() == null || !getConfiguration().getRefresh() ? null : new ServiceRefresher(getRepository(), SystemPrincipal.ROOT, service),
 						// defaults to an hour
 						new LastModifiedTimeoutManager(getConfiguration().getCacheTimeout() == null ? 1000*60*60 : getConfiguration().getCacheTimeout())
 					);
