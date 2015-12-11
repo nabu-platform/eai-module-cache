@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import be.nabu.eai.api.EnvironmentSpecific;
 import be.nabu.eai.repository.api.CacheProviderArtifact;
 import be.nabu.eai.repository.jaxb.ArtifactXMLAdapter;
 import be.nabu.libs.services.api.DefinedService;
@@ -26,24 +27,32 @@ public class CacheConfiguration {
 	public void setService(List<DefinedService> services) {
 		this.services = services;
 	}
+	
+	@EnvironmentSpecific
 	public Long getMaxEntrySize() {
 		return maxEntrySize;
 	}
 	public void setMaxEntrySize(Long maxEntrySize) {
 		this.maxEntrySize = maxEntrySize;
 	}
+	
+	@EnvironmentSpecific
 	public Long getMaxTotalSize() {
 		return maxTotalSize;
 	}
 	public void setMaxTotalSize(Long maxTotalSize) {
 		this.maxTotalSize = maxTotalSize;
 	}
+	
+	@EnvironmentSpecific
 	public Long getCacheTimeout() {
 		return cacheTimeout;
 	}
 	public void setCacheTimeout(Long accessTimeout) {
 		this.cacheTimeout = accessTimeout;
 	}
+	
+	@EnvironmentSpecific
 	@XmlJavaTypeAdapter(value = ArtifactXMLAdapter.class)
 	public CacheProviderArtifact getCacheProvider() {
 		return cacheProvider;
@@ -51,6 +60,7 @@ public class CacheConfiguration {
 	public void setCacheProvider(CacheProviderArtifact cacheProvider) {
 		this.cacheProvider = cacheProvider;
 	}
+	
 	public Boolean getRefresh() {
 		return refresh;
 	}
