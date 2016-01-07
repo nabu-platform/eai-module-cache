@@ -47,6 +47,9 @@ public class CacheArtifact extends JAXBArtifact<CacheConfiguration> implements S
 			}
 			else if (getConfiguration().getService() != null && !getConfiguration().getService().isEmpty()) {
 				for (DefinedService service : getConfiguration().getService()) {
+					if (service == null) {
+						continue;
+					}
 					getConfiguration().getCacheProvider().create(
 							service.getId(), 
 						// defaults to 100 mb
