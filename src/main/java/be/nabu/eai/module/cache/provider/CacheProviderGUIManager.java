@@ -12,7 +12,7 @@ import be.nabu.libs.property.api.Value;
 public class CacheProviderGUIManager extends BaseJAXBGUIManager<CacheProviderConfiguration, CacheProviderArtifactImpl> {
 
 	public CacheProviderGUIManager() {
-		super("Cache Provider", CacheProviderArtifactImpl.class, new CacheProviderManager(), CacheProviderConfiguration.class);
+		super("Resource Cache Provider", CacheProviderArtifactImpl.class, new CacheProviderManager(), CacheProviderConfiguration.class);
 	}
 
 	@Override
