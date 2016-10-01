@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import be.nabu.eai.repository.api.LicenseManager;
+import be.nabu.eai.repository.api.LicensedRepository;
 import be.nabu.eai.repository.api.Repository;
 import be.nabu.eai.repository.artifacts.jaxb.JAXBArtifact;
 import be.nabu.eai.repository.util.SystemPrincipal;
@@ -18,6 +20,8 @@ import be.nabu.libs.services.cache.ServiceRefresher;
 
 public class CacheArtifact extends JAXBArtifact<CacheConfiguration> implements StartableArtifact, StoppableArtifact {
 
+	public static final String MODULE = "nabu.misc.cache";
+	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private boolean started;
 	
@@ -37,6 +41,14 @@ public class CacheArtifact extends JAXBArtifact<CacheConfiguration> implements S
 
 	@Override
 	public void start() throws IOException {
+		boolean licensed = true;
+		if (getRepository() instanceof LicensedRepository) {
+			LicenseManager licenseManager = ((LicensedRepository) getRepository()).getLicenseManager();
+			licensed = licenseManager != null && licenseManager.isLicensed(MODULE);
+			if (!licensed) {
+				logger.warn("No license found for the cache module, service caches are disabled");
+			}
+		}
 		logger.debug("Creating service cache for: " + getId());
 		try {
 			if (getConfiguration().getService() == null) {
@@ -45,7 +57,7 @@ public class CacheArtifact extends JAXBArtifact<CacheConfiguration> implements S
 			else if (getConfiguration().getCacheProvider() == null) {
 				logger.warn("Can not create cache for '" + getId() + "', no cache provider found");
 			}
-			else if (getConfiguration().getService() != null && !getConfiguration().getService().isEmpty()) {
+			else if (licensed && getConfiguration().getService() != null && !getConfiguration().getService().isEmpty()) {
 				for (DefinedService service : getConfiguration().getService()) {
 					if (service == null) {
 						continue;
