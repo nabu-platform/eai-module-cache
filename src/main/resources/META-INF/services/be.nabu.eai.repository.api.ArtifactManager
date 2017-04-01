@@ -1,3 +1,4 @@
 be.nabu.eai.module.cache.service.CacheManager
 be.nabu.eai.module.cache.provider.CacheProviderManager
 be.nabu.eai.module.cache.provider.memory.MemoryCacheProviderManager
+be.nabu.eai.module.cache.session.SessionCacheManager
