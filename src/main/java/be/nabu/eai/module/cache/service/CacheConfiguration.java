@@ -2,6 +2,7 @@ package be.nabu.eai.module.cache.service;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -52,6 +53,7 @@ public class CacheConfiguration {
 		this.cacheTimeout = accessTimeout;
 	}
 	
+	@NotNull
 	@EnvironmentSpecific
 	@XmlJavaTypeAdapter(value = ArtifactXMLAdapter.class)
 	public CacheProviderArtifact getCacheProvider() {
