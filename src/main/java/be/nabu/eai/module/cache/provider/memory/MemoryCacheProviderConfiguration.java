@@ -4,13 +4,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "memoryCache")
 public class MemoryCacheProviderConfiguration {
-	private Boolean serializeValues;
+	private boolean serializeValues;
+	private boolean cluster;
 
-	public Boolean getSerializeValues() {
+	public boolean isSerializeValues() {
 		return serializeValues;
 	}
-	public void setSerializeValues(Boolean serializeValues) {
+	public void setSerializeValues(boolean serializeValues) {
 		this.serializeValues = serializeValues;
 	}
-	
+	public boolean isCluster() {
+		return cluster;
+	}
+	public void setCluster(boolean cluster) {
+		this.cluster = cluster;
+	}
 }
