@@ -94,4 +94,9 @@ public class SessionCache implements Cache {
 		// do nothing
 	}
 
+	@Override
+	public void refresh(Object key) throws IOException {
+		// do nothing
+	}
+
 }
