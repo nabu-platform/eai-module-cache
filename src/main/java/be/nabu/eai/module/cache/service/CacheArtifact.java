@@ -33,6 +33,9 @@ public class CacheArtifact extends JAXBArtifact<CacheConfiguration> implements S
 	public void stop() throws IOException {
 		if (started && getConfiguration().getCacheProvider() != null && getConfiguration().getService() != null) {
 			for (DefinedService service : getConfiguration().getService()) {
+				if (service == null) {
+					continue;
+				}
 				getConfiguration().getCacheProvider().remove(service.getId());
 			}
 		}
