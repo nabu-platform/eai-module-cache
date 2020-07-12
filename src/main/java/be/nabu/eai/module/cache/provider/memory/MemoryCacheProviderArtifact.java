@@ -10,8 +10,10 @@ import be.nabu.eai.repository.api.CacheProviderArtifact;
 import be.nabu.eai.repository.api.ClusteredServer;
 import be.nabu.eai.repository.api.Repository;
 import be.nabu.eai.repository.artifacts.jaxb.JAXBArtifact;
+import be.nabu.eai.repository.util.SystemPrincipal;
 import be.nabu.libs.artifacts.api.StoppableArtifact;
 import be.nabu.libs.cache.api.Cache;
+import be.nabu.libs.cache.api.CacheAnnotater;
 import be.nabu.libs.cache.api.CacheRefresher;
 import be.nabu.libs.cache.api.CacheTimeoutManager;
 import be.nabu.libs.cache.api.DataSerializer;
@@ -21,10 +23,12 @@ import be.nabu.libs.cluster.api.ClusterInstance;
 import be.nabu.libs.cluster.api.Destroyable;
 import be.nabu.libs.resources.api.ResourceContainer;
 import be.nabu.libs.services.api.ServiceRunner;
+import be.nabu.libs.services.pojo.POJOUtils;
 
 public class MemoryCacheProviderArtifact extends JAXBArtifact<MemoryCacheProviderConfiguration> implements CacheProviderArtifact, StoppableArtifact {
 
 	private Map<String, MemoryCache> caches = new HashMap<String, MemoryCache>();
+	private CacheAnnotater annotater;
 	
 	public MemoryCacheProviderArtifact(String id, ResourceContainer<?> directory, Repository repository) {
 		super(id, directory, repository, "memory-cache.xml", MemoryCacheProviderConfiguration.class);
@@ -45,22 +49,39 @@ public class MemoryCacheProviderArtifact extends JAXBArtifact<MemoryCacheProvide
 			}
 		}
 	}
+	
+	private CacheAnnotater getAnnotater() {
+		if (annotater == null && getConfig().getAnnotater() != null) {
+			synchronized(this) {
+				if (annotater == null && getConfig().getAnnotater() != null) {
+					annotater = POJOUtils.newProxy(CacheAnnotater.class, getRepository(), SystemPrincipal.ROOT, getConfig().getAnnotater());
+				}
+			}
+		}
+		return annotater;
+	}
 
 	@Override
 	public Cache create(String artifactId, long maxTotalSize, long maxEntrySize, DataSerializer<?> keySerializer, DataSerializer<?> valueSerializer, CacheRefresher refresher, CacheTimeoutManager timeoutManager) {
 		synchronized(caches) {
 			Map<Object, MemoryCacheEntry> entries = null;
+			Map<Object, Map<String, String>> annotations = null;
 			if (getConfig().isCluster()) {
 				ServiceRunner serviceRunner = EAIResourceRepository.getInstance().getServiceRunner();
 				if (serviceRunner instanceof ClusteredServer) {
 					ClusterInstance cluster = ((ClusteredServer) serviceRunner).getCluster();
 					entries = cluster.map(artifactId);
+					annotations = cluster.map(artifactId + ":annotations");
 				}
 			}
 			if (entries == null) {
 				entries = new HashMap<Object, MemoryCacheEntry>();
 			}
-			MemoryCache cache = new MemoryCache(refresher, timeoutManager, entries, getConfig().isCluster());
+			if (annotations == null) {
+				annotations = new HashMap<Object, Map<String, String>>();
+			}
+			MemoryCache cache = new MemoryCache(refresher, timeoutManager, entries, annotations, getConfig().isCluster());
+			cache.setAnnotater(getAnnotater());
 			cache.setKeySerializer(keySerializer);
 			try {
 				if (getConfiguration().isSerializeValues()) {
