@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import be.nabu.eai.repository.EAIResourceRepository;
 import be.nabu.eai.repository.api.LicenseManager;
 import be.nabu.eai.repository.api.LicensedRepository;
 import be.nabu.eai.repository.api.Repository;
@@ -61,23 +62,26 @@ public class CacheArtifact extends JAXBArtifact<CacheConfiguration> implements S
 				logger.warn("Can not create cache for '" + getId() + "', no cache provider found");
 			}
 			else if (licensed && getConfiguration().getService() != null && !getConfiguration().getService().isEmpty()) {
-				for (DefinedService service : getConfiguration().getService()) {
-					if (service == null) {
-						continue;
+				// only enable if we are not in development modus or if we allow it in development modus
+				if (getConfig().isEnableInDevelopment() || !EAIResourceRepository.isDevelopment()) {
+					for (DefinedService service : getConfiguration().getService()) {
+						if (service == null) {
+							continue;
+						}
+						getConfiguration().getCacheProvider().create(
+								service.getId(), 
+							// defaults to 100 mb
+							getConfiguration().getMaxTotalSize() == null ? 1024*1024*100 : getConfiguration().getMaxTotalSize(),
+							// defaults to 10 mb
+							getConfiguration().getMaxEntrySize() == null ? 1024*1024*5 : getConfiguration().getMaxEntrySize(),
+							new ComplexContentSerializer(service.getServiceInterface().getInputDefinition()),
+							new ComplexContentSerializer(service.getServiceInterface().getOutputDefinition()),
+							// only set a refresher if we have a refresh timeout set
+							getConfiguration().getRefresh() == null || !getConfiguration().getRefresh() ? null : new ServiceRefresher(getRepository(), SystemPrincipal.ROOT, service),
+							// defaults to an hour
+							new LastModifiedTimeoutManager(getConfiguration().getCacheTimeout() == null ? 1000*60*60 : getConfiguration().getCacheTimeout())
+						);
 					}
-					getConfiguration().getCacheProvider().create(
-							service.getId(), 
-						// defaults to 100 mb
-						getConfiguration().getMaxTotalSize() == null ? 1024*1024*100 : getConfiguration().getMaxTotalSize(),
-						// defaults to 10 mb
-						getConfiguration().getMaxEntrySize() == null ? 1024*1024*5 : getConfiguration().getMaxEntrySize(),
-						new ComplexContentSerializer(service.getServiceInterface().getInputDefinition()),
-						new ComplexContentSerializer(service.getServiceInterface().getOutputDefinition()),
-						// only set a refresher if we have a refresh timeout set
-						getConfiguration().getRefresh() == null || !getConfiguration().getRefresh() ? null : new ServiceRefresher(getRepository(), SystemPrincipal.ROOT, service),
-						// defaults to an hour
-						new LastModifiedTimeoutManager(getConfiguration().getCacheTimeout() == null ? 1000*60*60 : getConfiguration().getCacheTimeout())
-					);
 				}
 				started = true;
 			}

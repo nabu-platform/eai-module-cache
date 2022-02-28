@@ -13,13 +13,14 @@ import be.nabu.eai.repository.jaxb.ArtifactXMLAdapter;
 import be.nabu.libs.services.api.DefinedService;
 
 @XmlRootElement(name = "cache")
-@XmlType(propOrder = { "cacheProvider", "service", "maxEntrySize", "maxTotalSize", "cacheTimeout", "refresh" })
+@XmlType(propOrder = { "cacheProvider", "service", "maxEntrySize", "maxTotalSize", "cacheTimeout", "refresh", "enableInDevelopment" })
 public class CacheConfiguration {
 	
 	private CacheProviderArtifact cacheProvider;
 	private List<DefinedService> services;
 	private Long maxEntrySize, maxTotalSize, cacheTimeout;
 	private Boolean refresh;
+	private boolean enableInDevelopment = true;
 	
 	@XmlJavaTypeAdapter(value = ArtifactXMLAdapter.class)
 	public List<DefinedService> getService() {
@@ -69,4 +70,12 @@ public class CacheConfiguration {
 	public void setRefresh(Boolean refresh) {
 		this.refresh = refresh;
 	}
+	
+	public boolean isEnableInDevelopment() {
+		return enableInDevelopment;
+	}
+	public void setEnableInDevelopment(boolean enableInDevelopment) {
+		this.enableInDevelopment = enableInDevelopment;
+	}
+	
 }
