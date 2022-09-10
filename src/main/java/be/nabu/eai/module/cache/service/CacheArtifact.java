@@ -33,12 +33,13 @@ public class CacheArtifact extends JAXBArtifact<CacheConfiguration> implements S
 	@Override
 	public void stop() throws IOException {
 		if (started && getConfiguration().getCacheProvider() != null && getConfiguration().getService() != null) {
-			for (DefinedService service : getConfiguration().getService()) {
-				if (service == null) {
-					continue;
-				}
-				getConfiguration().getCacheProvider().remove(service.getId());
-			}
+			// @2022-03-22: due to a bug clustered caches were never reset correctly on shutdown. this bug has been fixed but we wanted to keep this behavior, in the future we might reenable it with a checkbox
+//			for (DefinedService service : getConfiguration().getService()) {
+//				if (service == null) {
+//					continue;
+//				}
+//				getConfiguration().getCacheProvider().remove(service.getId());
+//			}
 		}
 		started = false;
 	}
