@@ -2,3 +2,4 @@ be.nabu.eai.module.cache.service.CacheGUIManager
 be.nabu.eai.module.cache.provider.CacheProviderGUIManager
 be.nabu.eai.module.cache.provider.memory.MemoryCacheProviderGUIManager
 be.nabu.eai.module.cache.session.SessionCacheGUIManager
+be.nabu.eai.module.cache.provider.context.ContextCacheProviderGUIManager
